@@ -5,6 +5,13 @@ from fastapi import FastAPI
 
 from app.models import DeveloperTask, ProductivityReport, TaskStatus
 
+@app.get("/task/{task_id}/status")
+async def get_task_status(task_id: int) -> dict:
+    """Returns the status of a specific task by its ID."""
+    task = MOCK_TASKS.get(task_id)
+    if not task:
+        return {"error": "Task not found"}
+    return {"task_id": task_id, "status": task.status}
 
 # --- Mock Database / In-Memory Service Logic
 MOCK_TASKS: Dict[int, DeveloperTask] = {
