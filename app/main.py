@@ -5,13 +5,8 @@ from fastapi import FastAPI
 
 from app.models import DeveloperTask, ProductivityReport, TaskStatus
 
-@app.get("/task/{task_id}/status")
-async def get_task_status(task_id: int) -> dict:
-    """Returns the status of a specific task by its ID."""
-    task = MOCK_TASKS.get(task_id)
-    if not task:
-        return {"error": "Task not found"}
-    return {"task_id": task_id, "status": task.status}
+# --- FastAPI Initialization ---
+app = FastAPI(title="Productivity Reporting System")
 
 # --- Mock Database / In-Memory Service Logic
 MOCK_TASKS: Dict[int, DeveloperTask] = {
@@ -44,9 +39,7 @@ async def generate_productivity_report() -> ProductivityReport:
     )
 
 
-# --- FastAPI Initialization and Routes ---
-app = FastAPI(title="Productivity Reporting System")
-
+# --- Routes ---
 @app.get("/status")
 async def get_status() -> dict:
     return {"status": "ok"}
@@ -62,6 +55,15 @@ async def get_all_tasks():
 async def get_productivity_report():
     """Returns the calculated productivity report."""
     return await generate_productivity_report()
+
+
+@app.get("/task/{task_id}/status")
+async def get_task_status(task_id: int) -> dict:
+    """Returns the status of a specific task by its ID."""
+    task = MOCK_TASKS.get(task_id)
+    if not task:
+        return {"error": "Task not found"}
+    return {"task_id": task_id, "status": task.status}
 
 
 @app.post("/log_task", response_model=DeveloperTask)
